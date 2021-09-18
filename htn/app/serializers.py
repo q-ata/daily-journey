@@ -25,6 +25,9 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(self.context['request'], user)
+            return {
+                'username': username
+            }
 
         else:
             raise serializers.ValidationError(
