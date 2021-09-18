@@ -5,8 +5,6 @@ from rest_framework.response import Response
 from .models import User, RunHistory
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .mapper import Mapper
-import json
 
 #class modelNameSerializer
 class RunHistorySerializer(serializers.ModelSerializer):
@@ -50,16 +48,3 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
-
-class MapSerializer(serializers.Serializer):
-    lat = serializers.DecimalField(max_digits=100, decimal_places=7)
-    long = serializers.DecimalField(max_digits=100, decimal_places=7)
-    dist = serializers.IntegerField()
-
-    #def validate(self, data):
-
-    def create(self, validated_data):
-        m = Mapper()
-        res = m.getMap()
-        print(res)
-        return res

@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from .models import User, RunHistory
 from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer, MapSerializer
 from rest_framework import viewsets, generics
+from .mapper import Mapper
+import json
 
 # Create your views here.
 
@@ -29,4 +31,7 @@ class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
 
 class MapView(generics.CreateAPIView):
-    serializer_class = MapSerializer
+    def post(self, request):
+        m = Mapper()
+        res = m.getMap()
+        return Response(res)
