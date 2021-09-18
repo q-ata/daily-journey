@@ -23,7 +23,8 @@ router.register(r'runhistory', views.RunHistoryView, 'runhistory_api')
 router.register(r'pathpoints', views.PathPointsView, 'pathpoints_api')
 
 urlpatterns = [
-    path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('api/login', views.LoginView.as_view(), name="login_api"),
+    path('api/register', views.RegisterView.as_view(), name="register_api")
 ]
