@@ -15,7 +15,7 @@ class RunHistorySerializer(serializers.ModelSerializer):
         model = RunHistory
         fields = ('userid', 'time', 'distance', 'pathid')
 
-    def get(self, request, format=None):
+    def list(self, request):
         content = {
             "user": str(request.user),
             "auth": str(request.auth),
