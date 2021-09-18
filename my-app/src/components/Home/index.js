@@ -2,6 +2,7 @@ import React, {Container, Component} from "react";
 import { Link } from "react-router-dom";
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react"
 import "./index.css"
+const key = require("./api-key.json").key;
 
 const coords = [43.4757589, -80.5402737]
 
@@ -30,5 +31,5 @@ class Home extends Component {
 }
 
 export default GoogleApiWrapper({
-    apiKey: ("")
+    apiKey: (key)
 })(Home);
