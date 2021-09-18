@@ -11,7 +11,7 @@ class RunHistory(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.DateTimeField()
     distance = models.IntegerField()
-    pathid = models.BigAutoField()
+    pathid = models.BigAutoField(primary_key=True)
 
 class SearchSettings(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
