@@ -23,6 +23,7 @@ router.register(r'runhistory', views.RunHistoryView, 'runhistory_api')
 router.register(r'pathpoints', views.PathPointsView, 'pathpoints_api')
 
 urlpatterns = [
+    path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls))
 ]

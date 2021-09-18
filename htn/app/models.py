@@ -15,14 +15,14 @@ class RunHistory(models.Model):
 
 class SearchSettings(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    saved_lat = models.DecimalField()
-    saved_long = models.DecimalField()
+    saved_lat = models.DecimalField(max_digits=100, decimal_places=7)
+    saved_long = models.DecimalField(max_digits=100, decimal_places=7)
     distance = models.IntegerField()
     
 class StartingLocs(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_lat = models.DecimalField()
-    start_long = models.DecimalField()
+    start_lat = models.DecimalField(max_digits=100, decimal_places=7)
+    start_long = models.DecimalField(max_digits=100, decimal_places=7)
 
 class SavedPaths(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -31,7 +31,7 @@ class SavedPaths(models.Model):
 class PathPoints(models.Model):
     pathid = models.IntegerField()
     listid = models.IntegerField()
-    point_lat = models.DecimalField()
-    point_long = models.DecimalField()
+    point_lat = models.DecimalField(max_digits=100, decimal_places=7)
+    point_long = models.DecimalField(max_digits=100, decimal_places=7)
 
 #model here
