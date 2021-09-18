@@ -61,4 +61,5 @@ class MapSerializer(serializers.Serializer):
     def create(self, validated_data):
         m = Mapper()
         res = m.getMap()
-        return json.dump(res["positions"], f, ensure_ascii=False, indent=4)
+        print(res)
+        return res
