@@ -6,6 +6,7 @@ from .models import User, RunHistory
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .mapper import Mapper
+import json
 
 #class modelNameSerializer
 class RunHistorySerializer(serializers.ModelSerializer):
@@ -59,4 +60,5 @@ class MapSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         m = Mapper()
-        return m.getMap()
+        res = m.getMap()
+        return json.dump(res["positions"], f, ensure_ascii=False, indent=4)
