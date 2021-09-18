@@ -5,12 +5,14 @@ import json
 import os
 sys.setrecursionlimit(10000000)
 
-print(os.getcwd())
+MIN_INTERSECTIONS, MAX_INTERSECTIONS = [20, 500]
+MIN_DIST, MAX_DIST = [1000, 4000]
+DESIRED_DIST = 2000
+
+global vis, graph, cycles
 
 rel_path = "my-app/ryans_magic_algo/"
-
 with open(rel_path + "graph.json") as f:
-    global graph
     graph = json.load(f)
     f.close()
 
@@ -31,10 +33,6 @@ def addEdge(u, v, w):
         graph[v].append((u, w))
 
 
-MIN_INTERSECTIONS, MAX_INTERSECTIONS = [20, 500]
-MIN_DIST, MAX_DIST = [1000, 4000]
-
-
 def dfs_cycle(start, v, path, dist):
     vis[v] = 1
     path.append(v)
@@ -44,7 +42,7 @@ def dfs_cycle(start, v, path, dist):
                 continue
             if dist + wt < MIN_DIST or dist + wt > MAX_DIST:
                 continue
-            cycles.append((f"{dist + wt} meters", f"{len(path)+1} intersections", path.copy() + [u]))
+            cycles.append([dist + wt, len(path)+1, path.copy() + [u]])
         elif vis[u] > 0:
             continue
         elif vis[u] == 0:
@@ -53,18 +51,27 @@ def dfs_cycle(start, v, path, dist):
     vis[v] = 2
     return False
 
+close_to_desired = lambda l: abs(l[0] - DESIRED_DIST)
 
-if __name__ == "__main__":
+def get_best_routes(g):
+    global graph, vis, cycles
+    graph = g
     nodes = list(graph.keys())
 
-    for node in choices(nodes, k=100): # nodes:
+    for node in choices(nodes, k=500): # nodes:
         root = node
         vis = create_dict(graph)
         dfs_cycle(root, root, [], 0)
-    
-    with open(rel_path + "paths.txt", "w") as g:
-        for m, i, path in cycles:
-            L = len(path)
-            step = max(1, int(L/30))
-            g.write(f"{m}, {i}, {str(path[slice(0, L, step)])} \n\n")
-        g.close()
+
+    cycles = sorted(cycles, key=close_to_desired)[:10]
+
+    paths = []
+
+    for m, i, path in cycles:
+        L = len(path)
+        step = max(1, int(L/100))
+        paths.append({"distance (meters)" : m, "intersections" : i, "lat/long path": path[slice(0, L, step)]})
+
+    return paths
+
+print(get_best_routes(graph))
