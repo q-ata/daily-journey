@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class User(AbstractUser):
     # id field added automatically
-    username = models.CharField(max_length=1000)
+    username = models.CharField(max_length=1000, unique=True)
     password = models.CharField(max_length=1000)
 
 class RunHistory(models.Model):
