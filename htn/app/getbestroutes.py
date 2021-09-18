@@ -73,4 +73,4 @@ def get_best_routes(g):
 
     return paths
 
-print(get_best_routes(graph))
+#print(get_best_routes(graph))

@@ -71,11 +71,11 @@ class Mapper:
         pass
     return self.createGraph(filtWays)
 
-mapper = Mapper()
-res = mapper.getMap()
+#mapper = Mapper()
+#res = mapper.getMap()
 
-import json
-with open("positions.json", "w", encoding="utf-8") as f:
-  json.dump(res["positions"], f, ensure_ascii=False, indent=4)
-with open("graph.json", "w", encoding="utf-8") as f:
-  json.dump(res["graph"], f, ensure_ascii=False, indent=4)
+#import json
+#with open("positions.json", "w", encoding="utf-8") as f:
+ # json.dump(res["positions"], f, ensure_ascii=False, indent=4)
+#with open("graph.json", "w", encoding="utf-8") as f:
+ # json.dump(res["graph"], f, ensure_ascii=False, indent=4)
