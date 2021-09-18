@@ -26,5 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login', views.LoginView.as_view(), name="login_api"),
-    path('api/register', views.RegisterView.as_view(), name="register_api")
+    path('api/register', views.RegisterView.as_view(), name="register_api"),
+    path('api/map', views.MapView.as_view(), name="map_api")
 ]

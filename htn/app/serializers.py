@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .models import User, RunHistory, PathPoints
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from .mapper import Mapper
 
 #class modelNameSerializer
 class RunHistorySerializer(serializers.ModelSerializer):
@@ -25,7 +26,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=1000)
 
     def validate(self, data):
-        print(data)
         username = data.get("username", None)
         password = data.get("password", None)
         user = authenticate(username=username, password=password)
@@ -55,3 +55,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
 
+class MapSerializer(serializers.Serializer):
+    lat = serializers.DecimalField(max_digits=100, decimal_places=7)
+    long = serializers.DecimalField(max_digits=100, decimal_places=7)
+    dist = serializers.IntegerField()
+
+    #def validate(self, data):
+
+    def create(self, validated_data):
+        m = Mapper()
+        return m.getMap()

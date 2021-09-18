@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.urls import reverse
 from rest_framework.response import Response
 from .models import User, RunHistory, PathPoints
-from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer, PathPointsSerializer
+from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer, PathPointsSerializer, MapSerializer
 from rest_framework import viewsets, generics
 
 # Create your views here.
@@ -31,3 +31,6 @@ class RegisterView(generics.CreateAPIView):
 class LoginView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = LoginSerializer
+
+class MapView(generics.CreateAPIView):
+    serializer_class = MapSerializer
