@@ -19,7 +19,8 @@ from rest_framework import routers
 from app import views
 
 router = routers.DefaultRouter()
-router.register(r'app', views.ModelView, 'app')
+router.register(r'runhistory', views.RunHistoryView, 'runhistory_api')
+router.register(r'pathpoints', views.PathPointsView, 'pathpoints_api')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
