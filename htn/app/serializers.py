@@ -16,13 +16,17 @@ class PathPointsSerializer(serializers.ModelSerializer):
         fields = ('pathid', 'listid', 'point_lat', 'point_long')
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=1000, many=True)
-    password = serializers.CharField(max_length=1000, many=True)
+    username = serializers.CharField(max_length=1000)
+    password = serializers.CharField(max_length=1000)
 
     def validate(self, data):
         print(data)
         username = data.get("username", None)
         password = data.get("password", None)
+        user = authenticate(username=username, password=password)
+        if user is None:
+            serializers.ValidationError("Invalid login")
+
         return {
             'username': username,
             'password': password
@@ -31,12 +35,7 @@ class LoginSerializer(serializers.Serializer):
     def create(self, validated_data):
         user = authenticate(username=validated_data['username'], password=validated_data['password'])
         print(validated_data)
-        if user is not None:
-            login(self.context['request'], user)
-            return Response(user, status=status.HTTP_200_OK)
-
-        else:
-            return Response(user, status=status.HTTP_400_BAD_REQUEST)
+        return user
 
 
 class RegisterSerializer(serializers.ModelSerializer):
