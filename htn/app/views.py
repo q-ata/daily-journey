@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.urls import reverse
 from rest_framework.response import Response
 from .models import User, RunHistory
-from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer, MapSerializer
+from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer
 from rest_framework import viewsets, generics
 from .mapper import Mapper
 import json
