@@ -1,10 +1,14 @@
 from rest_framework import serializers
-#import model
+from .models import RunHistory, PathPoints
 
 #class modelNameSerializer
-class ModelNameSerializer(serializers.ModelSerializer):
+class RunHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        #model = model
-        #fields = model variables
-        fields = ('')
+        model = RunHistory
+        fields = ('userid', 'time', 'distance', 'pathid')
+
+class PathPointsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PathPoints
+        fields = ('pathid', 'listid', 'point_lat', 'point_long')
 
