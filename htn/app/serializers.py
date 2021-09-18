@@ -20,6 +20,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=1000)
 
     def validate(self, data):
+        print(data)
         username = data.get("username", None)
         password = data.get("password", None)
         return {
@@ -29,12 +30,13 @@ class LoginSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = authenticate(username=validated_data['username'], password=validated_data['password'])
+        print(validated_data)
         if user is not None:
             login(self.context['request'], user)
-            return Response("Valid login", status=status.HTTP_200_OK)
+            return Response(user, status=status.HTTP_200_OK)
 
         else:
-            return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
+            return Response(user, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
