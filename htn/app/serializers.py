@@ -16,8 +16,8 @@ class PathPointsSerializer(serializers.ModelSerializer):
         fields = ('pathid', 'listid', 'point_lat', 'point_long')
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=1000)
-    password = serializers.CharField(max_length=1000)
+    username = serializers.CharField(max_length=1000, many=True)
+    password = serializers.CharField(max_length=1000, many=True)
 
     def validate(self, data):
         print(data)
