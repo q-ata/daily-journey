@@ -11,10 +11,6 @@ class RunHistorySerializer(serializers.ModelSerializer):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    class Meta:
-        model = RunHistory
-        fields = ('userid', 'time', 'distance', 'pathid')
-
     def list(self, request):
         print(request)
         content = {
@@ -22,6 +18,10 @@ class RunHistorySerializer(serializers.ModelSerializer):
             "auth": str(request.auth),
         }
         return Response(content)
+
+    class Meta:
+        model = RunHistory
+        fields = ('userid', 'time', 'distance', 'pathid')
 
 class PathPointsSerializer(serializers.ModelSerializer):
     class Meta:
