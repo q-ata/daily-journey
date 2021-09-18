@@ -25,7 +25,7 @@ class LoginSerializer(serializers.Serializer):
         password = data.get("password", None)
         user = authenticate(username=username, password=password)
         if user is None:
-            serializers.ValidationError("Invalid login")
+            raise serializers.ValidationError("Invalid login")
 
         return {
             'username': username,
@@ -34,7 +34,7 @@ class LoginSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = authenticate(username=validated_data['username'], password=validated_data['password'])
-        print(validated_data)
+        login(self.context.get("request"), user)
         return user
 
 
