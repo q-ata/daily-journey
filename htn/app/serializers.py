@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate, login
 from rest_framework import status
 from rest_framework.response import Response
-from .models import User, RunHistory, PathPoints
+from .models import User, RunHistory
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .mapper import Mapper
@@ -15,11 +15,6 @@ class RunHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = RunHistory
         fields = ('userid', 'time', 'distance', 'pathid')
-
-class PathPointsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PathPoints
-        fields = ('pathid', 'listid', 'point_lat', 'point_long')
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=1000)
