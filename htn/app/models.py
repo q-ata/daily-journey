@@ -27,11 +27,6 @@ class StartingLocs(models.Model):
 class SavedPaths(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
     pathid = models.IntegerField()
-
-class PathPoints(models.Model):
-    pathid = models.IntegerField()
-    listid = models.IntegerField()
-    point_lat = models.DecimalField(max_digits=100, decimal_places=7)
-    point_long = models.DecimalField(max_digits=100, decimal_places=7)
+    pathpoints = models.TextField()
 
 #model here
