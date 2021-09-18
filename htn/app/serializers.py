@@ -3,12 +3,24 @@ from django.contrib.auth import authenticate, login
 from rest_framework import status
 from rest_framework.response import Response
 from .models import User, RunHistory, PathPoints
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 #class modelNameSerializer
 class RunHistorySerializer(serializers.ModelSerializer):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     class Meta:
         model = RunHistory
         fields = ('userid', 'time', 'distance', 'pathid')
+
+    def get(self, request, format=None):
+        content = {
+            "user": str(request.user),
+            "auth": str(request.auth),
+        }
+        return Response(content)
 
 class PathPointsSerializer(serializers.ModelSerializer):
     class Meta:
