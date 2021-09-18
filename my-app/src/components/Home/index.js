@@ -7,15 +7,16 @@ const key = require("./api-key.json").key;
 const coords = [43.4757589, -80.5402737]
 
 const style = {
-    width: "90%",
+    border: "5px solid black",
+    margin: "2vh",
+    width: "98%",
     height: "90%"
 }
 
 class Home extends Component {
     render () {
         return (
-            <div>
-                Home
+            <div className="google-maps">
                 <Map 
                     google={this.props.google} 
                     zoom={15}
@@ -23,8 +24,9 @@ class Home extends Component {
                     lat: coords[0],
                     lng: coords[1],
                     }}
-                    style={style}
-                />
+                    style={style}>
+                    <Marker />
+                </Map>
             </div>
         )
     }
