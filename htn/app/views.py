@@ -35,7 +35,7 @@ class RunHistoryView(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
         
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(userid=request.user, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -56,7 +56,7 @@ class SavedPathView(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
         
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(userid=request.user, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -75,16 +75,16 @@ class MapView(views.APIView):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
-        if not "center" in request.data:
+        if not "center" in request.query_params:
             return Response("Invalid center", status=status.HTTP_400_BAD_REQUEST)
 
-        if not "distance" in request.data:
+        if not "distance" in request.query_params:
             return Response("Invalid distance", status=status.HTTP_400_BAD_REQUEST)
         
         m = Mapper()
-        mapperres = m.getMap(request.data["center"], request.data["distance"])
+        mapperres = m.getMap(request.query_params["center"], request.query_params["distance"])
         pather = Pather()
-        res = pather.get_best_routes(mapperres["graph"],request.data["distance"])
+        res = pather.get_best_routes(mapperres["graph"],request.query_params["distance"])
         return Response(res)
 
 class GoogleMapView(views.APIView):
@@ -92,9 +92,9 @@ class GoogleMapView(views.APIView):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
-        if not "place_id" in request.data:
+        if not "place_id" in request.query_params:
             return Response("Invalid place_id", status=status.HTTP_400_BAD_REQUEST)
 
-        r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.data["place_id"]+"&key="+jdata["key"])
+        r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.query_params["place_id"]+"&key="+jdata["key"])
         data = r.json()
         return Response(data["result"]) 
