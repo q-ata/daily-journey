@@ -17,6 +17,8 @@ class RunHistoryView(viewsets.ModelViewSet):
 
     def list(self, request):
         print(request.user)
+        if request.user.is_anonymous:
+            return Response([])
         self.queryset.filter(userid = request.user)
         serialized = RunHistorySerializer(self.queryset, many=True)
         return Response(serialized.data)
