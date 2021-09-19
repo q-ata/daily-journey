@@ -65,10 +65,13 @@ class Pather:
     self.cycles = sorted(self.cycles, key=close_to_desired)[:10]
 
     paths = []
+    prevDis = 0
 
     for m, i, path in self.cycles:
       L = len(path)
       step = max(1, int(L/100))
-      paths.append({"distance" : m, "intersections" : i, "path": self.convertToArray(path[slice(0, L, step)])})
+      if m != prevDis:
+        paths.append({"distance" : m, "intersections" : i, "path": self.convertToArray(path[slice(0, L, step)])})
+        prevDis = m
 
     return paths

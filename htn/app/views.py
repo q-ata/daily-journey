@@ -9,6 +9,12 @@ from rest_framework import viewsets, generics, views
 from .mapper import Mapper
 from .pather import Pather
 from rest_framework import serializers, status
+import requests
+import json
+
+f = open("key.json",)
+
+data = json.load(f)
 
 # Create your views here.
 
@@ -31,11 +37,28 @@ class RunHistoryView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
 class SavedPathView(viewsets.ModelViewSet):
     serializer_class = SavedPathSerializer
     queryset = SavedPaths.objects.all()
+
+    def list(self, request):
+        if request.user.is_anonymous:
+            return Response([])
+        self.queryset.filter(userid = request.user)
+        serialized = SavedPathSerializer(self.queryset, many=True)
+        return Response(serialized.data)
+
+    def create(self, request):
+        if request.user.is_anonymous:
+            return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -47,9 +70,29 @@ class LoginView(generics.CreateAPIView):
 
 class MapView(views.APIView):
     def post(self, request):
-        print(request.data)
+        if request.user.is_anonymous:
+            return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
+
+        if not "center" in request.data:
+            return Response("Invalid center", status=status.HTTP_400_BAD_REQUEST)
+
+        if not "distance" in request.data:
+            return Response("Invalid distance", status=status.HTTP_400_BAD_REQUEST)
+        
         m = Mapper()
-        mapperres = m.getMap((43.475926804284946, -80.53856707363026), 200)
+        mapperres = m.getMap(request.data["center"], request.data["distance"])
         pather = Pather()
-        res = pather.get_best_routes(mapperres["graph"],200)
+        res = pather.get_best_routes(mapperres["graph"],request.data["distance"])
         return Response(res)
+
+class GoogleMapView(views.APIView):
+    def post(self, request):
+        if request.user.is_anonymous:
+            return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
+
+        if not "place_id" in request.data:
+            return Response("Invalid place_id", status=status.HTTP_400_BAD_REQUEST)
+
+        r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.data["place_id"]+"&key="+f["key"])
+        data = r.json()
+        return Response(data["result"]) 
