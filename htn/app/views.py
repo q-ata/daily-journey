@@ -32,7 +32,7 @@ class LoginView(generics.CreateAPIView):
 
 class MapView(views.APIView):
     def post(self, request):
-        print(request.body)
+        print(request.data)
         m = Mapper()
         mapperres = m.getMap((43.475926804284946, -80.53856707363026), 200)
         pather = Pather()
