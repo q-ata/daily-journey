@@ -36,7 +36,7 @@ class RunHistoryView(viewsets.ModelViewSet):
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
         
         newdata = {
-            "userid": request.user,
+            "userid": request.user.id,
             "time": request.data["time"],
             "distance": request.data["distance"]
         }
@@ -62,7 +62,7 @@ class SavedPathView(viewsets.ModelViewSet):
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
         
         newdata = {
-            "userid": request.user,
+            "userid": request.user.id,
             "pathpoints": request.data["pathpoints"]
         }
         serializer = self.get_serializer(data=newdata)
