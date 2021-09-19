@@ -91,10 +91,11 @@ class MapView(views.APIView):
         string = request.query_params["center"]
         splitArr = string.split(",")
         center = [Decimal(splitArr[0]), Decimal(splitArr[1])]
+        distance = int(request.query_params["distance"])
 
-        mapperres = m.getMap(center, request.query_params["distance"])
+        mapperres = m.getMap(center, distance)
         pather = Pather()
-        res = pather.get_best_routes(mapperres["graph"],request.query_params["distance"])
+        res = pather.get_best_routes(mapperres["graph"],distance)
         return Response(res)
 
 class GoogleMapView(views.APIView):
