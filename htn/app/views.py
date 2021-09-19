@@ -23,10 +23,10 @@ class RunHistoryView(viewsets.ModelViewSet):
         serialized = RunHistorySerializer(self.queryset, many=True)
         return Response(serialized.data)
 
-    def create(self, request):
+    def create(self, request, validated_data):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
-        return RunHistory.objects.create({request.data})
+        return RunHistory.objects.create(**validated_data)
 
 class SavedPathView(viewsets.ModelViewSet):
     serializer_class = SavedPathSerializer
