@@ -8,6 +8,7 @@ const {API_KEY, IP} = require("./config.json");
 
 const fixHeader = (opts) => {
   if (!opts.headers) opts.headers = {};
+  opts.credentials = "include";
   const cookie = Cookies.get("csrftoken");
   if (cookie) opts.headers["X-CSRFToken"] = cookie;
   return opts;
@@ -142,8 +143,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    setActive(!!paths.length)
-  }, [paths]);
+    setActive(!!paths.length);
+    if (paths.length) inserter(paths[activeMap].center, paths[activeMap].path.map((d) => {
+      return {lat: parseFloat(d[0]), lng: parseFloat(d[1])};
+    }));
+  }, [paths, activeMap]);
 
   return (
     <div style={{width: "100%", height: "100%"}}>
@@ -200,15 +204,27 @@ const App = () => {
               <ShoppingCartIcon />
             </div>
             </div>*/}
-          <div className="gogogo" onClick={() => {
-            const data = ['43.4729066,-80.5338804', '43.4729572,-80.5340549', '43.4732763,-80.5342911', '43.4756905,-80.5360944', '43.4777285,-80.5375786', '43.4779120,-80.5373296', '43.4784467,-80.5357971', '43.4786125,-80.5352214', '43.4766695,-80.5338455', '43.4765614,-80.5338998', '43.4761104,-80.5348463', '43.4750745,-80.5341077', '43.4742166,-80.5334892', '43.4733808,-80.5328807', '43.4729066,-80.5338804'];
-            const data2 = ['43.4746485,-80.5461679', '43.4771810,-80.5479446', '43.4780464,-80.5485202', '43.4796923,-80.5497561', '43.4801376,-80.5502983', '43.4802597,-80.5492803', '43.4835721,-80.5463119', '43.4855355,-80.5446107', '43.4852818,-80.5404216', '43.4830324,-80.5412391', '43.4804932,-80.5421659', '43.4770339,-80.5399727', '43.4758539,-80.5429470'];
+          <div className="gogogo" onClick={async () => {
+            const [lat, lon] = search.split(",");
+            if (!lat || !lon) return;
+            const [plat, plon] = [parseFloat(lat), parseFloat(lon)];
+            if (isNaN(plat) || isNaN(plon)) return;
+            const res = fetch(`${IP}/api/map`, fixHeader({
+              method: "POST",
+              body: JSON.stringify({center: [plat, plon], distance}),
+              headers: {"Content-Type": "application/json"}
+            }));
+            const json = res.json().map((p) => {
+              return {...p, center: [plat, plon]};
+            });
+            setPaths(json.slice(0, 5));
+            /*
             const parsed = (active ? data : data2).map((d) => {
               const pair = d.split(",");
               return {lat: parseFloat(pair[0]), lng: parseFloat(pair[1])};
             });
             inserter(parsed[0], parsed);
-            setActive(true);
+            */
           }}>
             Find A Journey!
           </div>
