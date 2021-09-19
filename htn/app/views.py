@@ -1,3 +1,4 @@
+from htn.app import getbestroutes
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.urls import reverse
@@ -7,6 +8,7 @@ from .models import User, RunHistory
 from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
+from .getbestroutes import RouteFinder
 import json
 
 # Create your views here.
@@ -34,5 +36,6 @@ class LoginView(generics.CreateAPIView):
 class MapView(views.APIView):
     def post(self, request):
         m = Mapper()
-        res = m.getMap()
+        graph = m.getMap()
+        res = RouteFinder.get_best_routes(graph)
         return Response(res)
