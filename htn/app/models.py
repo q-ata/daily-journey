@@ -8,9 +8,10 @@ class User(AbstractUser):
     password = models.CharField(max_length=1000)
 
 class RunHistory(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
+    userid = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.DateTimeField()
     distance = models.IntegerField()
+    pathid = models.AutoField(primary_key=True)
 
 class SearchSettings(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
