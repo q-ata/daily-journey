@@ -4,13 +4,32 @@ import RoomIcon from '@mui/icons-material/Room';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import "./App.css"
+const {API_KEY, IP} = require("./config.json");
 
-const key = "PLACEHOLDER";
+const fixHeader = (opts) => {
+  if (!opts.headers) opts.headers = {};
+  const cookie = Cookies.get("csrftoken");
+  if (cookie) opts.headers["X-CSRFToken"] = cookie;
+  return opts;
+};
 
-const LoginPrompt = ({setter}) => {
+const LoginPrompt = () => {
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
+
+  const login = async () => {
+    const res = await fetch(`${IP}/api/login`, fixHeader({
+      method: "POST",
+      body: JSON.stringify({username, password}),
+      headers: {"Content-Type": "application/json"},
+      credentials: "include"
+    }));
+    console.log(res);
+    return await res.json();
+  };
+
   return (
     <div className="login-cover" style={{display: show ? "block" : "none"}}>
       <div className="login-prompt">
@@ -21,12 +40,14 @@ const LoginPrompt = ({setter}) => {
           </div>
           <div className="password">
             <span className="pass-label">Password:</span>
-            <input className="pass-prompt" type="text" onChange={(e) => setPassword(e.target.value)} />
+            <input className="pass-prompt" type="password" onChange={(e) => setPassword(e.target.value)} />
           </div>
         </div>
-        <div className="login-submit" onClick={(e) => {
+        <div className="login-submit" onClick={async (e) => {
+          const res = await login();
+          console.log(res);
+          fetch(`${IP}/api/runhistory`, fixHeader({})).then((r) => r.json().then(console.log));
           setShow(false);
-          setter({username, password})
         }}>
           Login
         </div>
@@ -36,7 +57,7 @@ const LoginPrompt = ({setter}) => {
 };
 
 const getNearestRoad = async (loc) => {
-  const res = await fetch(`https://roads.googleapis.com/v1/nearestRoads?points=${loc[0]},${loc[1]}&key=${key}`);
+  const res = await fetch(`https://roads.googleapis.com/v1/nearestRoads?points=${loc[0]},${loc[1]}&key=${API_KEY}`);
   const json = await res.json();
   // If no suitable POI, use some random place in Africa
   if (!json || !json.snappedPoints || !json.snappedPoints[0]) return "ChIJibXlCJOI_xkRAsO6cFyg0Ro";
@@ -44,7 +65,7 @@ const getNearestRoad = async (loc) => {
 };
 
 const getPlaceName = async (id) => {
-  // const res = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${key}`);
+  // const res = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${API_KEY}`);
   // const json = await res.json();
   return {long_name: "Tim Hortons", short_name: "Tim Hortons"};
 };
@@ -72,8 +93,6 @@ const Journey = ({pos, dist}) => {
 
 const App = () => {
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [distance, setDistance] = useState(2000);
   const [search, setSearch] = useState("");
   const [active, setActive] = useState(false);
@@ -128,10 +147,7 @@ const App = () => {
 
   return (
     <div style={{width: "100%", height: "100%"}}>
-      <LoginPrompt setter={({u, p}) => {
-        setUsername(u);
-        setPassword(p);
-      }} />
+      <LoginPrompt />
       <div className="top-bar">
         <img src="./logo.png" alt="logo" />
         <span className="name">
@@ -197,7 +213,9 @@ const App = () => {
             Find A Journey!
           </div>
           <div className="additional-buttons" style={{display: paths.length ? "inline-block" : "none"}}>
-            <div className="save-path">
+            <div className="save-path" onClick={() => {
+
+            }}>
               Save This Journey!
             </div>
             <div className="finished">
