@@ -34,6 +34,5 @@ class MapView(views.APIView):
     def post(self, request):
         m = Mapper()
         graph = m.getMap()
-        print(graph)
-        res = RouteFinder.get_best_routes(graph)
+        res = RouteFinder.get_best_routes(graph["graph"])
         return Response(res)
