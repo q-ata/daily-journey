@@ -1,8 +1,6 @@
 import {React, useEffect, useState} from "react";
 import Cookies from 'js-cookie'
 import RoomIcon from '@mui/icons-material/Room';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import "./App.css"
 const {API_KEY, IP} = require("./config.json");
 
@@ -47,7 +45,14 @@ const LoginPrompt = () => {
         <div className="login-submit" onClick={async (e) => {
           const res = await login();
           console.log(res);
-          fetch(`${IP}/api/runhistory`, fixHeader({})).then((r) => r.json().then(console.log));
+          fetch(`${IP}/api/runhistory`, fixHeader({})).then((r) => r.json().then((res) => {
+            console.log("RUN HISTORY");
+            console.log(res);
+          }));
+          fetch(`${IP}/api/savedpath`, fixHeader({})).then((r) => r.json().then((res) => {
+            console.log("SAVED PATHS");
+            console.log(res);
+          }));
           setShow(false);
         }}>
           Login
@@ -66,9 +71,9 @@ const getNearestRoad = async (loc) => {
 };
 
 const getPlaceName = async (id) => {
-  // const res = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${API_KEY}`);
-  // const json = await res.json();
-  return {long_name: "Tim Hortons", short_name: "Tim Hortons"};
+  const res = await fetch(`${IP}/api/gquery?place_id=${id}&key=${API_KEY}`);
+  const json = await res.json();
+  return json;
 };
 
 const Journey = ({pos, dist}) => {
@@ -99,7 +104,7 @@ const App = () => {
   const [active, setActive] = useState(false);
   const [activeMap, setActiveMap] = useState(0);
   const [paths, setPaths] = useState([]);
-  const [savedPaths, setSavedPaths] = useState([{path: [[1, 1]], distance: 1200}]);
+  const [savedPaths, setSavedPaths] = useState([]);
 
   const inserter = (center, coords) => {
     const s = document.createElement("script");
@@ -135,11 +140,13 @@ const App = () => {
   };
 
   useEffect(() => {
+    /*
     (async () => {
       const id = await getNearestRoad([43.47666644427674,-80.5390365754832]);
       const data = await getPlaceName(id);
       console.log(data);
     })();
+    */
   }, []);
 
   useEffect(() => {
@@ -209,15 +216,17 @@ const App = () => {
             if (!lat || !lon) return;
             const [plat, plon] = [parseFloat(lat), parseFloat(lon)];
             if (isNaN(plat) || isNaN(plon)) return;
-            const res = fetch(`${IP}/api/map`, fixHeader({
-              method: "POST",
+            console.log({center: [plat, plon], distance});
+            const res = await fetch(`${IP}/api/map?center=${plat},${plon}&distance=${distance}`, fixHeader({
+              method: "GET",
               body: JSON.stringify({center: [plat, plon], distance}),
               headers: {"Content-Type": "application/json"}
             }));
-            const json = res.json().map((p) => {
+            const json = await res.json();
+            const data = json.map((p) => {
               return {...p, center: [plat, plon]};
             });
-            setPaths(json.slice(0, 5));
+            setPaths(data.slice(0, 5));
             /*
             const parsed = (active ? data : data2).map((d) => {
               const pair = d.split(",");
@@ -229,12 +238,31 @@ const App = () => {
             Find A Journey!
           </div>
           <div className="additional-buttons" style={{display: paths.length ? "inline-block" : "none"}}>
-            <div className="save-path" onClick={() => {
-
+            <div className="save-path" onClick={async () => {
+              console.log({pathpoints: paths[activeMap]});
+              const res = await fetch(`${IP}/api/savedpath`, fixHeader({
+                method: "POST",
+                body: JSON.stringify({pathpoints: paths[activeMap]}),
+                headers: {"Content-Type": "application/json"}
+              }));
+              console.log(res.json());
             }}>
               Save This Journey!
             </div>
-            <div className="finished">
+            <div className="finished" onClick={async () => {
+              const now = new Date();
+              const conv = (val) => {
+                if (val < 10) return `0${val}`;
+                else return val;
+              };
+              const dateString = `${now.getYear() + 1900}-${conv(now.getMonth())}-${conv(now.getDate())}T${conv(now.getHours())}:${conv(now.getMinutes())}`;
+              console.log({distance: paths[activeMap].distance, time: dateString});
+              const res = await fetch(`${IP}/api/runhistory`, fixHeader({
+                method: "POST",
+                body: JSON.stringify({distance: paths[activeMap].distance, time: dateString}),
+                headers: {"Content-Type": "application/json"}
+              }));
+            }}>
               Journey Finished!
             </div>
           </div><br />
