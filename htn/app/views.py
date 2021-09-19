@@ -11,8 +11,10 @@ from .pather import Pather
 from rest_framework import serializers, status
 import requests
 import json
+import os
+import sys
 
-f = open(".key.json",)
+f = open(os.path.join(sys.path[0], "key.json",), "r")
 
 data = json.load(f)
 
