@@ -8,6 +8,8 @@ from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializ
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
 from .pather import Pather
+from htn.app import serializers
+from rest_framework import serializers, status
 
 # Create your views here.
 
@@ -16,12 +18,17 @@ class RunHistoryView(viewsets.ModelViewSet):
     queryset = RunHistory.objects.all()
 
     def list(self, request):
-        print(request.user)
         if request.user.is_anonymous:
             return Response([])
         self.queryset.filter(userid = request.user)
         serialized = RunHistorySerializer(self.queryset, many=True)
         return Response(serialized.data)
+
+    def create(self, request):
+        if request.user.is_anonymous:
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(request.data)
+        return RunHistory.objects.create(request.data)
 
 class SavedPathView(viewsets.ModelViewSet):
     serializer_class = SavedPathSerializer

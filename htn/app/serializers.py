@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
-from rest_framework import status
 from rest_framework.decorators import authentication_classes
 from rest_framework.response import Response
 from .models import User, RunHistory, SavedPaths
