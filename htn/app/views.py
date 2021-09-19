@@ -1,6 +1,3 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from django.urls import reverse
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from .models import User, RunHistory, SavedPaths
@@ -11,7 +8,7 @@ from .pather import Pather
 from rest_framework import serializers, status
 import requests
 import json
-import os
+from decimal import Decimal
 
 
 f = open("/root/hack-the-north/htn/app/key.json")
@@ -91,7 +88,11 @@ class MapView(views.APIView):
             return Response("Invalid distance", status=status.HTTP_400_BAD_REQUEST)
         
         m = Mapper()
-        mapperres = m.getMap(request.query_params["center"], request.query_params["distance"])
+        string = request.query_params["center"]
+        splitArr = string.split(",")
+        center = [[Decimal(splitArr[0]), Decimal(splitArr[1])]]
+
+        mapperres = m.getMap(center, request.query_params["distance"])
         pather = Pather()
         res = pather.get_best_routes(mapperres["graph"],request.query_params["distance"])
         return Response(res)
