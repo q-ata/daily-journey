@@ -12,9 +12,8 @@ from rest_framework import serializers, status
 import requests
 import json
 import os
-import sys
 
-f = open(os.path.join(sys.path[0], "key.json",), "r")
+f = open(os.path.abspath("key.json"))
 
 data = json.load(f)
 
