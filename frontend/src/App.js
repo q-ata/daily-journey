@@ -4,6 +4,23 @@ import RoomIcon from '@mui/icons-material/Room';
 import "./App.css"
 const {API_KEY, IP} = require("./config.json");
 
+const deg2rad = (deg) => {
+  return deg * (Math.PI/180)
+}
+
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2-lat1);  // deg2rad below
+  const dLon = deg2rad(lon2-lon1); 
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  const d = R * c; // Distance in km
+  return d * 1000;
+}
+
 const fixHeader = (opts) => {
   if (!opts.headers) opts.headers = {};
   opts.credentials = "include";
@@ -12,11 +29,11 @@ const fixHeader = (opts) => {
   return opts;
 };
 
-const LoginPrompt = () => {
+const LoginPrompt = ({setter}) => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(!Cookies.get("csrftoken"));
 
   const login = async () => {
     const res = await fetch(`${IP}/api/login`, fixHeader({
@@ -25,7 +42,6 @@ const LoginPrompt = () => {
       headers: {"Content-Type": "application/json"},
       credentials: "include"
     }));
-    console.log(res);
     return await res.json();
   };
 
@@ -44,15 +60,7 @@ const LoginPrompt = () => {
         </div>
         <div className="login-submit" onClick={async (e) => {
           const res = await login();
-          console.log(res);
-          fetch(`${IP}/api/runhistory`, fixHeader({})).then((r) => r.json().then((res) => {
-            console.log("RUN HISTORY");
-            console.log(res);
-          }));
-          fetch(`${IP}/api/savedpath`, fixHeader({})).then((r) => r.json().then((res) => {
-            console.log("SAVED PATHS");
-            console.log(res);
-          }));
+          setter(true);
           setShow(false);
         }}>
           Login
@@ -71,7 +79,7 @@ const getNearestRoad = async (loc) => {
 };
 
 const getPlaceName = async (id) => {
-  const res = await fetch(`${IP}/api/gquery?place_id=${id}&key=${API_KEY}`);
+  const res = await fetch(`${IP}/api/gquery?place_id=${id}`, fixHeader({}));
   const json = await res.json();
   return json;
 };
@@ -82,11 +90,13 @@ const Journey = ({pos, dist}) => {
   const [distance, setDistance] = useState(dist);
 
   useEffect(() => {
-    getNearestRoad(pos).then((res) => getPlaceName(res).then((place) => setNiceName(place.long_name)));
+    getNearestRoad(pos).then((res) => getPlaceName(res).then((place) => {
+      setNiceName(place.result.address_components[0].long_name);
+    }));
   }, [pos]);
 
   return (
-    <li className="a-run">
+    <li key={dist} className="a-run">
       <div className="start-name">
         {niceName}
       </div>
@@ -95,7 +105,7 @@ const Journey = ({pos, dist}) => {
       </div>
     </li>
   );
-}; 
+};
 
 const App = () => {
 
@@ -105,6 +115,31 @@ const App = () => {
   const [activeMap, setActiveMap] = useState(0);
   const [paths, setPaths] = useState([]);
   const [savedPaths, setSavedPaths] = useState([]);
+  const [runninghistory, setRunninghistory] = useState([]);
+  const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    if (!logged) return;
+    fetch(`${IP}/api/runhistory`, fixHeader({})).then((r) => r.json().then((res) => {
+      console.log(res);
+      const items = res.map((r) => {
+        const d = new Date(r.time);
+        return {date: `${d.getMonth() + 1}/${d.getDate() + 1}`, distance: r.distance, time: d};
+      }).sort((a, b) => b.time.getTime() - a.time.getTime()).slice(0, 7).reverse();
+      setRunninghistory(items);
+    }));
+    fetch(`${IP}/api/savedpath`, fixHeader({})).then((r) => r.json().then((res) => {
+      const savePaths = [];
+      for (const path of res) {
+        const pts = JSON.parse(path.pathpoints);
+        let tot = 0;
+        for (let i = 0; i < pts.length - 1; i++) tot += getDistance(...pts[i], ...pts[i + 1]);
+        tot = Math.round(tot);
+        savePaths.push({path: pts, distance: tot});
+      }
+      setSavedPaths(savePaths);
+    }));
+  }, [logged]);
 
   const inserter = (center, coords) => {
     const s = document.createElement("script");
@@ -112,7 +147,7 @@ const App = () => {
     s.async = true;
     s.innerHTML = `
     initMap = () => {
-      const center = {lat: ${center.lat}, lng: ${center.lng}};
+      const center = {lat: ${center[0]}, lng: ${center[1]}};
       const map = new google.maps.Map(document.getElementsByClassName("map-display")[0], {
         zoom: 16,
         center,
@@ -140,16 +175,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    /*
-    (async () => {
-      const id = await getNearestRoad([43.47666644427674,-80.5390365754832]);
-      const data = await getPlaceName(id);
-      console.log(data);
-    })();
-    */
-  }, []);
-
-  useEffect(() => {
     setActive(!!paths.length);
     if (paths.length) inserter(paths[activeMap].center, paths[activeMap].path.map((d) => {
       return {lat: parseFloat(d[0]), lng: parseFloat(d[1])};
@@ -158,7 +183,7 @@ const App = () => {
 
   return (
     <div style={{width: "100%", height: "100%"}}>
-      <LoginPrompt />
+      <LoginPrompt setter={setLogged} />
       <div className="top-bar">
         <img src="./logo.png" alt="logo" />
         <span className="name">
@@ -203,23 +228,13 @@ const App = () => {
             if (distance < 400) setDistance(400);
             else if (distance > 4000) setDistance(4000);
           }} /> meters<br />
-          {/*<div className="stopby">
-            <div className="stop-cafe">
-              <LocalCafeIcon />
-            </div>
-            <div className="stop-shop">
-              <ShoppingCartIcon />
-            </div>
-            </div>*/}
           <div className="gogogo" onClick={async () => {
             const [lat, lon] = search.split(",");
             if (!lat || !lon) return;
             const [plat, plon] = [parseFloat(lat), parseFloat(lon)];
             if (isNaN(plat) || isNaN(plon)) return;
-            console.log({center: [plat, plon], distance});
             const res = await fetch(`${IP}/api/map?center=${plat},${plon}&distance=${distance}`, fixHeader({
               method: "GET",
-              body: JSON.stringify({center: [plat, plon], distance}),
               headers: {"Content-Type": "application/json"}
             }));
             const json = await res.json();
@@ -227,22 +242,15 @@ const App = () => {
               return {...p, center: [plat, plon]};
             });
             setPaths(data.slice(0, 5));
-            /*
-            const parsed = (active ? data : data2).map((d) => {
-              const pair = d.split(",");
-              return {lat: parseFloat(pair[0]), lng: parseFloat(pair[1])};
-            });
-            inserter(parsed[0], parsed);
-            */
           }}>
             Find A Journey!
           </div>
           <div className="additional-buttons" style={{display: paths.length ? "inline-block" : "none"}}>
             <div className="save-path" onClick={async () => {
-              console.log({pathpoints: paths[activeMap]});
-              const res = await fetch(`${IP}/api/savedpath`, fixHeader({
+              console.log({pathpoints: paths[activeMap].path});
+              const res = await fetch(`${IP}/api/savedpath/`, fixHeader({
                 method: "POST",
-                body: JSON.stringify({pathpoints: paths[activeMap]}),
+                body: JSON.stringify({pathpoints: JSON.stringify(paths[activeMap].path)}),
                 headers: {"Content-Type": "application/json"}
               }));
               console.log(res.json());
@@ -257,7 +265,7 @@ const App = () => {
               };
               const dateString = `${now.getYear() + 1900}-${conv(now.getMonth())}-${conv(now.getDate())}T${conv(now.getHours())}:${conv(now.getMinutes())}`;
               console.log({distance: paths[activeMap].distance, time: dateString});
-              const res = await fetch(`${IP}/api/runhistory`, fixHeader({
+              const res = await fetch(`${IP}/api/runhistory/`, fixHeader({
                 method: "POST",
                 body: JSON.stringify({distance: paths[activeMap].distance, time: dateString}),
                 headers: {"Content-Type": "application/json"}
@@ -286,9 +294,16 @@ const App = () => {
           <div className="history-header">
             Journey History
           </div>
-
-          {/*For Catherine*/}
-
+          <div className="chart-wrap vertical">  
+              <div className="grid">
+          {runninghistory.map((rh, i) => {
+            return (
+              <div key={i} className="bar" style={{width: `${rh.distance/20}px`}} data-name={rh.date} title={rh.date}></div>   
+            );
+          }
+          )}
+          </div>
+            </div>
         </div>
       </div>
     </div>
