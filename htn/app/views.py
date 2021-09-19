@@ -6,7 +6,7 @@ from .models import User, RunHistory
 from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
-from .getbestroutes import RouteFinder
+from .pather import Pather
 
 # Create your views here.
 
@@ -32,7 +32,9 @@ class LoginView(generics.CreateAPIView):
 
 class MapView(views.APIView):
     def post(self, request):
+        print(request.body)
         m = Mapper()
-        graph = m.getMap()
-        res = RouteFinder.get_best_routes(graph["graph"])
+        mapperres = m.getMap((43.475926804284946, -80.53856707363026), 200)
+        pather = Pather()
+        res = pather.get_best_routes(mapperres["graph"],200)
         return Response(res)
