@@ -8,7 +8,7 @@ from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializ
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
 from .pather import Pather
-from rest_framework import status
+from rest_framework import serializers, status
 
 # Create your views here.
 
@@ -25,7 +25,7 @@ class RunHistoryView(viewsets.ModelViewSet):
 
     def create(self, request):
         if request.user.is_anonymous:
-            return Response(RunHistorySerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializers.ValidationError("Invalid login"), status=status.HTTP_400_BAD_REQUEST)
         return RunHistory.objects.create(RunHistorySerializer(request.data))
 
 class SavedPathView(viewsets.ModelViewSet):
