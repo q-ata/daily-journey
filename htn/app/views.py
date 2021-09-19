@@ -12,7 +12,7 @@ from rest_framework import serializers, status
 import requests
 import json
 
-f = open("key.json",)
+f = open(".key.json",)
 
 data = json.load(f)
 

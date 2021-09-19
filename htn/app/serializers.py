@@ -21,7 +21,7 @@ class SavedPathSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SavedPaths
-        fields = ('userid', 'pathid', 'pathpoints')
+        fields = ('userid', 'pathpoints')
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=1000)
