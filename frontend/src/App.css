@@ -285,6 +285,10 @@
   padding: 8px;
 }
 
+.a-run:hover {
+  cursor: pointer;
+}
+
 .start-name, .saved-dist {
   width: calc(50% - 1px);
   display: inline-block;

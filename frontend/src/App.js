@@ -6,7 +6,7 @@ const {API_KEY, IP} = require("./config.json");
 
 const deg2rad = (deg) => {
   return deg * (Math.PI/180)
-}
+};
 
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Radius of the earth in km
@@ -19,7 +19,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   const d = R * c; // Distance in km
   return d * 1000;
-}
+};
 
 const fixHeader = (opts) => {
   if (!opts.headers) opts.headers = {};
@@ -87,7 +87,7 @@ const getPlaceName = async (id) => {
   return json;
 };
 
-const Journey = ({pos, dist}) => {
+const Journey = ({pos, dist, path, adder}) => {
 
   const [niceName, setNiceName] = useState("");
   const [distance, setDistance] = useState(dist);
@@ -99,7 +99,9 @@ const Journey = ({pos, dist}) => {
   }, [pos]);
 
   return (
-    <li key={dist} className="a-run">
+    <li key={dist} className="a-run" onClick={() => {
+      adder(path, dist);
+    }}>
       <div className="start-name">
         {niceName}
       </div>
@@ -127,7 +129,7 @@ const App = () => {
       console.log(res);
       const items = res.map((r) => {
         const d = new Date(r.time);
-        return {date: `${d.getMonth() + 1}/${d.getDate() + 1}`, distance: r.distance, time: d};
+        return {date: `${d.getMonth() + 1}/${d.getDate()}`, distance: r.distance, time: d};
       }).sort((a, b) => b.time.getTime() - a.time.getTime()).slice(0, 7).reverse();
       setRunninghistory(items);
     }));
@@ -244,7 +246,13 @@ const App = () => {
             const json = await res.json();
             const data = json.map((p) => {
               return {...p, center: [plat, plon]};
+            }).filter((p) => Math.abs(p.distance - distance) < 500).sort((a, b) => {
+              const amin = a.path.map((p) => getDistance(...p, plat, plon)).sort((a, b) => a - b)[0];
+              const bmin = b.path.map((p) => getDistance(...p, plat, plon)).sort((a, b) => a - b)[0];
+              return amin - bmin;
             });
+            console.log(data);
+            
             setPaths(data.slice(0, 5));
           }}>
             Find A Journey!
@@ -267,7 +275,7 @@ const App = () => {
                 if (val < 10) return `0${val}`;
                 else return val;
               };
-              const dateString = `${now.getYear() + 1900}-${conv(now.getMonth())}-${conv(now.getDate())}T${conv(now.getHours())}:${conv(now.getMinutes())}`;
+              const dateString = `${now.getYear() + 1900}-${conv(now.getMonth() + 1)}-${conv(now.getDate())}T${conv(now.getHours())}:${conv(now.getMinutes())}`;
               console.log({distance: paths[activeMap].distance, time: dateString});
               const res = await fetch(`${IP}/api/runhistory/`, fixHeader({
                 method: "POST",
@@ -290,7 +298,15 @@ const App = () => {
           </div>
           <ul className="runs">
             {savedPaths.map((p) => {
-              return <Journey pos={p.path[0]} dist={p.distance} />
+              return <Journey pos={p.path[0]} path={p.path} dist={p.distance} adder={(pts, dist) => {
+                const [lat, lon] = search.split(",");
+                if (!lat || !lon) return;
+                const [plat, plon] = [parseFloat(lat), parseFloat(lon)];
+                if (isNaN(plat) || isNaN(plon)) return;
+                const ps = {path: pts, intersections: pts.length, distance: dist, center: [plat, plon]};
+                console.log(ps);
+                setPaths([ps]);
+              }} />
             })}
           </ul>
         </div>

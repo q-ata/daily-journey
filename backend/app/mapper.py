@@ -55,6 +55,8 @@ class Mapper:
     return {"graph": graph, "positions": positions}
 
   def getMap(self, center, distance):
+    if distance < 2000:
+      distance = 2000
     increments = distance/200
     bb = {
       "s": center[0] - 0.001 * increments,
