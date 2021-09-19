@@ -8,7 +8,6 @@ from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializ
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
 from .pather import Pather
-from htn.app import serializers
 from rest_framework import serializers, status
 
 # Create your views here.
