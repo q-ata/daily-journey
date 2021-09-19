@@ -26,7 +26,6 @@ class StartingLocs(models.Model):
 
 class SavedPaths(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    pathpoints = models.TextField(),
-    pathid = models.IntegerField(null=True)
+    pathpoints = models.TextField()
 
 #model here
