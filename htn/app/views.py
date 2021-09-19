@@ -16,7 +16,7 @@ import os
 
 f = open("/root/hack-the-north/htn/app/key.json")
 
-data = json.load(f)
+jdata = json.load(f)
 
 # Create your views here.
 
@@ -95,6 +95,6 @@ class GoogleMapView(views.APIView):
         if not "place_id" in request.data:
             return Response("Invalid place_id", status=status.HTTP_400_BAD_REQUEST)
 
-        r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.data["place_id"]+"&key="+f["key"])
+        r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.data["place_id"]+"&key="+jdata["key"])
         data = r.json()
         return Response(data["result"]) 
