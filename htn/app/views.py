@@ -90,7 +90,7 @@ class MapView(views.APIView):
         m = Mapper()
         string = request.query_params["center"]
         splitArr = string.split(",")
-        center = [[Decimal(splitArr[0]), Decimal(splitArr[1])]]
+        center = [Decimal(splitArr[0]), Decimal(splitArr[1])]
 
         mapperres = m.getMap(center, request.query_params["distance"])
         pather = Pather()
