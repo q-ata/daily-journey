@@ -3,6 +3,7 @@ from typing import List
 from random import choices
 import json
 import os
+from decimal import Decimal
 sys.setrecursionlimit(10000000)
 
 class Pather:
@@ -42,6 +43,13 @@ class Pather:
         self.dfs_cycle(start, u, path.copy(), dist + wt)
     self.vis[v] = 2
     return False
+
+  def convertToArray(path):
+    decimalArr = []
+    for string in path:
+      splitArr = string.split(",")
+      decimalArr.append([Decimal(splitArr[0]), Decimal(splitArr[1])])
+    return decimalArr
   
   def get_best_routes(self, g, desired):
     self.graph = g
@@ -61,6 +69,6 @@ class Pather:
     for m, i, path in self.cycles:
       L = len(path)
       step = max(1, int(L/100))
-      paths.append({"distance (meters)" : m, "intersections" : i, "lat/long path": path[slice(0, L, step)]})
+      paths.append({"distance" : m, "intersections" : i, "path": self.convertToArray(path[slice(0, L, step)])})
 
     return paths
