@@ -98,6 +98,26 @@ class MapView(views.APIView):
         res = pather.get_best_routes(mapperres["graph"],distance)
         return Response(res)
 
+class BadMapView(views.APIView):
+    def get(self, request):
+        if request.user.is_anonymous:
+            return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
+
+        if not "center" in request.query_params:
+            return Response("Missing center", status=status.HTTP_400_BAD_REQUEST)
+
+        if not "distance" in request.query_params:
+            return Response("Missing distance", status=status.HTTP_400_BAD_REQUEST)
+        
+        m = Mapper()
+        string = request.query_params["center"]
+        splitArr = string.split(",")
+        center = [float(splitArr[0]), float(splitArr[1])]
+        distance = int(request.query_params["distance"])
+
+        mapperres = m.getMap(center, distance)
+        return Response(mapperres)
+
 class GoogleMapView(views.APIView):
     def get(self, request):
         if request.user.is_anonymous:

@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/login', views.LoginView.as_view(), name="login_api"),
     path('api/register', views.RegisterView.as_view(), name="register_api"),
     path('api/map', views.MapView.as_view(), name="map_api"),
+    path('api/badmap', views.BadMapView.as_view(), name="badmap_api"),
     path('api/gquery', views.GoogleMapView.as_view(), name="gquery_api")
 ]
