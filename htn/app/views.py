@@ -82,10 +82,10 @@ class MapView(views.APIView):
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
         if not "center" in request.query_params:
-            return Response("Invalid center", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Missing center", status=status.HTTP_400_BAD_REQUEST)
 
         if not "distance" in request.query_params:
-            return Response("Invalid distance", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Missing distance", status=status.HTTP_400_BAD_REQUEST)
         
         m = Mapper()
         string = request.query_params["center"]
@@ -104,7 +104,7 @@ class GoogleMapView(views.APIView):
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
         if not "place_id" in request.query_params:
-            return Response("Invalid place_id", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Missing place_id", status=status.HTTP_400_BAD_REQUEST)
 
         r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.query_params["place_id"]+"&key="+jdata["key"])
         data = r.json()
