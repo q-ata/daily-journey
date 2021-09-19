@@ -24,7 +24,7 @@ class RunHistoryView(viewsets.ModelViewSet):
     def list(self, request):
         if request.user.is_anonymous:
             return Response([])
-        self.queryset.filter(userid = request.user)
+        self.queryset = self.queryset.filter(userid = request.user)
         serialized = RunHistorySerializer(self.queryset, many=True)
         return Response(serialized.data)
 
@@ -50,7 +50,7 @@ class SavedPathView(viewsets.ModelViewSet):
     def list(self, request):
         if request.user.is_anonymous:
             return Response([])
-        #self.queryset.filter(userid = request.user)
+        self.queryset = self.queryset.filter(userid = request.user)
         serialized = SavedPathSerializer(self.queryset, many=True)
         return Response(serialized.data)
 
