@@ -14,7 +14,7 @@ import json
 import os
 
 
-f = open("./root/hack-the-north/htn/app/key.json")
+f = open("/root/hack-the-north/htn/app/key.json")
 
 data = json.load(f)
 
