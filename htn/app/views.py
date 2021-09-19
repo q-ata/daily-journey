@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.urls import reverse
 from rest_framework.response import Response
-from .models import User, RunHistory
-from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer
+from rest_framework.serializers import Serializer
+from .models import User, RunHistory, SavedPaths
+from .serializers import LoginSerializer, RegisterSerializer, RunHistorySerializer, SavedPathSerializer
 from rest_framework import viewsets, generics, views
 from .mapper import Mapper
 from .pather import Pather
@@ -15,12 +16,14 @@ class RunHistoryView(viewsets.ModelViewSet):
     queryset = RunHistory.objects.all()
 
     def list(self, request):
-        print(request)
-        content = {
-            "user": str(request.user),
-            "auth": str(request.auth),
-        }
-        return Response(content)
+        print(request.user)
+        self.queryset.filter(userid = request.user.id)
+        serialized = RunHistorySerializer(self.queryset, many=True)
+        return Response(serialized.data)
+
+class SavedPathView(viewsets.ModelViewSet):
+    serializer_class = SavedPathSerializer
+    queryset = SavedPaths.objects.all()
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()

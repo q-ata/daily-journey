@@ -66,7 +66,7 @@ class Mapper:
     filtWays = []
     for way in allWays:
       try:
-        if way["tags"]["highway"] in ["footway", "cycleway", "path", "service", "track"]:
+        if not way["tags"]["highway"] in ["footway", "cycleway", "path", "service", "track"]:
           filtWays.append(way)
       except:
         pass

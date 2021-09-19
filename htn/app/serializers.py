@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
 from rest_framework import status
+from rest_framework.decorators import authentication_classes
 from rest_framework.response import Response
-from .models import User, RunHistory
+from .models import User, RunHistory, SavedPaths
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,6 +15,14 @@ class RunHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = RunHistory
         fields = ('userid', 'time', 'distance', 'pathid')
+
+class SavedPathSerializer(serializers.ModelSerializer):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    class Meta:
+        model = SavedPaths
+        fields = ('userid', 'pathid', 'pathpoints')
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=1000)
