@@ -44,7 +44,7 @@ class Pather:
     self.vis[v] = 2
     return False
 
-  def convertToArray(path):
+  def convertToArray(self, path):
     decimalArr = []
     for string in path:
       splitArr = string.split(",")
