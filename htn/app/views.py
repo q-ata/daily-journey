@@ -69,7 +69,7 @@ class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
 
 class MapView(views.APIView):
-    def post(self, request):
+    def get(self, request):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,7 +86,7 @@ class MapView(views.APIView):
         return Response(res)
 
 class GoogleMapView(views.APIView):
-    def post(self, request):
+    def get(self, request):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
 
