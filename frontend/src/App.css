@@ -1,0 +1,309 @@
+#root, html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Ubuntu;
+}
+
+.top-bar {
+  width: 100%;
+  font-size: 1.6em;
+  height: 50px;
+  background-color: #e7e9eb;
+}
+
+.name {
+  vertical-align: top;
+  margin-top: 10px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+.login-cover {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(200, 200, 200, 33);
+}
+
+.login-prompt {
+  width: 500px;
+  height: 150px;
+  position: absolute;
+  top: 20%;
+  left: calc(50% - 250px);
+  border: 2px solid red;
+  text-align: center;
+}
+
+.login-section {
+  margin-top: 25px;
+  font-size: 24px;
+}
+
+.username {
+  margin-bottom: 10px;
+}
+
+.user-label, .pass-label {
+  width: 150px;
+  display: inline-block;
+}
+
+.login-submit {
+  font-size: 20px;
+  border: 2px outset black;
+  width: 50px;
+  margin: 0 auto;
+  margin-top: 10px;
+  padding: 3px;
+}
+
+.login-submit:hover {
+  cursor: pointer;
+}
+
+.login-submit:active {
+  border: 2px inset black;
+}
+
+.container {
+  display: flex;
+}
+
+.map-selector {
+  background-color: #EEE;
+}
+
+.maps {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.map-instance {
+  height: 100%;
+  display: inline-block;
+  padding: 0 12px;
+  line-height: 2.25;
+  border-right: 1px solid #999;
+}
+
+.map-instance:hover {
+  cursor: pointer;
+  background-color: #DDD;
+}
+
+.map-instance:active {
+  background-color: #CCC;
+}
+
+.map-instance.active-map {
+  background-color: #CCC;
+}
+
+.map-area {
+  width: 60%;
+  min-width: 700px;
+  height: 440px;
+  background-color: #CCC;
+}
+
+.map-selector {
+  height: 40px;
+}
+
+.map-display {
+  width: 100%;
+  height: 400px;
+}
+
+.map-placeholder {
+  width: 100%;
+  text-align: center;
+  margin-top: 150px;
+  font-size: 1.1em;
+}
+
+.search {
+  flex-grow: 100;
+  text-align: center;
+}
+
+.search-header {
+  font-size: 1.2em;
+  display: inline-block;
+  padding: 12px;
+}
+
+.search-area {
+  width: 80%;
+  margin: 0 auto;
+  height: 50px;
+}
+
+.search-box {
+  width: calc(100% - 50px);
+  height: 28px;
+  font-size: 1.1em;
+  padding: 2px;
+  float: left;
+}
+
+.my-location {
+  height: 32px;
+  width: 32px;
+  padding: 2px;
+  float: right;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+.my-location:hover {
+  cursor: pointer;
+  background-color: #DDD;
+}
+
+.my-location:active {
+  background-color: #CCC;
+}
+
+.my-location svg {
+  width: 100%;
+  height: 100%;
+}
+
+.distance {
+  margin: 10px;
+  width: 80%;
+}
+
+.dist-header {
+  display: inline-block;
+  font-size: 1.2em;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.gogogo {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid blue;
+  width: 120px;
+  margin: 0 auto;
+  margin-top: 12px;
+}
+
+.gogogo:hover {
+  cursor: pointer;
+  background-color: #EEE;
+}
+
+.gogogo:active {
+  background-color: #DDD;
+}
+
+.additional-buttons {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.save-path, .finished {
+  display: inline-block;
+  width: 160px;
+  font-size: 1.1em;
+  padding: 8px 0;
+  border-radius: 4px;
+  border: 1px solid blue;
+}
+
+.save-path:hover {
+  cursor: pointer;
+  background-color: #EEE;
+}
+
+.save-path:active {
+  background-color: #DDD;
+}
+
+.finished:hover {
+  cursor: pointer;
+}
+
+.finished:active {
+  background-color: #6F6;
+}
+
+.save-path {
+  float: left;
+}
+
+.finished {
+  float: right;
+  background-color: #8F8;
+}
+
+.info {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.stat-track {
+  min-height: 300px;
+  height: 20%;
+}
+
+.saved-runs {
+  width: 50%;
+  height: 100%;
+  display: inline-block;
+  background-color: #EEE;
+}
+
+.saved-header {
+  font-size: 1.1em;
+  padding: 15px;
+  text-align: center;
+  background-color: #E5E0E0;
+}
+
+.runs {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.a-run {
+  width: 100%;
+  line-height: 2;
+  padding: 8px;
+}
+
+.start-name, .saved-dist {
+  width: calc(50% - 1px);
+  display: inline-block;
+}
+
+.start-name {
+  border-right: 1px solid #999;
+}
+
+.saved-dist span {
+  padding-left: 8px;
+}
+
+.history {
+  width: 50%;
+  float: right;
+}
+
+.history-header {
+  font-size: 1.1em;
+  padding: 15px;
+  text-align: center;
+  background-color: #E0E3E5;
+}
