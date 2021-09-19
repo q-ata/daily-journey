@@ -8,7 +8,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=1000)
 
 class RunHistory(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    userid = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
     time = models.DateTimeField()
     distance = models.IntegerField()
 
