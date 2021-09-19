@@ -34,7 +34,12 @@ class RunHistoryView(viewsets.ModelViewSet):
     def create(self, request):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
-        request.data["userid"] = request.user
+        
+        request.data = {
+            "userid": request.user,
+            "time": request.data["time"],
+            "distance": request.data["distance"]
+        }
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -56,7 +61,10 @@ class SavedPathView(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             return Response("Invalid login", status=status.HTTP_400_BAD_REQUEST)
         
-        request.data["userid"] = request.user
+        request.data = {
+            "userid": request.user,
+            "pathpoints": request.data["pathpoints"]
+        }
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
