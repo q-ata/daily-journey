@@ -108,4 +108,4 @@ class GoogleMapView(views.APIView):
 
         r = requests.get("https://maps.googleapis.com/maps/api/place/details/json?place_id="+request.query_params["place_id"]+"&key="+jdata["key"])
         data = r.json()
-        return Response(data["result"]) 
+        return Response(data) 
