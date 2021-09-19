@@ -13,7 +13,7 @@ class RunHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RunHistory
-        fields = ('userid', 'time', 'distance', 'pathid')
+        fields = ('userid', 'time', 'distance')
 
 class SavedPathSerializer(serializers.ModelSerializer):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
