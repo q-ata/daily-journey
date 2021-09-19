@@ -13,7 +13,8 @@ import requests
 import json
 import os
 
-f = open("./key.json")
+
+f = open(os.path.abspath("./key.json"))
 
 data = json.load(f)
 
