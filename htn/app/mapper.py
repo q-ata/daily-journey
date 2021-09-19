@@ -54,12 +54,13 @@ class Mapper:
         graph[f"{nCoord[0]},{nCoord[1]}"].append([f"{cCoord[0]},{cCoord[1]}", dist])
     return {"graph": graph, "positions": positions}
 
-  def getMap(self):
+  def getMap(self, center, distance):
+    increments = distance / 200
     bb = {
-      "s": 43.4665253,
-"w": -80.5498493,
-"n": 43.4865253,
-"e": -80.5298493
+      "s": center[0] - 0.001 * increments,
+      "n": center[0] + 0.001 * increments,
+      "w": center[1] - 0.001 * increments,
+      "e": center[1] + 0.001 * increments
     }
     allWays = self.getWays(bb)
     filtWays = []
@@ -70,12 +71,3 @@ class Mapper:
       except:
         pass
     return self.createGraph(filtWays)
-
-#mapper = Mapper()
-#res = mapper.getMap()
-
-#import json
-#with open("positions.json", "w", encoding="utf-8") as f:
- # json.dump(res["positions"], f, ensure_ascii=False, indent=4)
-#with open("graph.json", "w", encoding="utf-8") as f:
- # json.dump(res["graph"], f, ensure_ascii=False, indent=4)
