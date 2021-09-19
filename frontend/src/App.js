@@ -6,6 +6,16 @@ import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import "./App.css"
 
 const key = "PLACEHOLDER";
+const runninghistory = [
+  { date: "09/12", distance: 400},
+  { date: "09/13", distance: 2000},
+  { date: "09/14", distance: 4000},
+  { date: "09/15", distance: 1504},
+  { date: "09/16", distance: 1222},
+  { date: "09/17", distance: 1504},
+  { date: "09/18", distance: 1222},
+];
+
 
 const LoginPrompt = ({setter}) => {
   const [username, setUsername] = useState("");
@@ -224,9 +234,17 @@ const App = () => {
           <div className="history-header">
             Journey History
           </div>
-
-          {/*For Catherine*/}
-
+          <div class="chart-wrap vertical">  
+              <div class="grid">
+          {runninghistory.map((rh) => {
+            return (
+                <div class="bar" style={{width: `${rh.distance/20}px`}} data-name={rh.date} title={rh.date}></div>   
+            )
+          }
+          )}
+          </div>
+            </div>
+          { }
         </div>
       </div>
     </div>
