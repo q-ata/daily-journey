@@ -35,6 +35,10 @@ const LoginPrompt = ({setter}) => {
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(!Cookies.get("csrftoken"));
 
+  useEffect(() => {
+    if (!show) setter(true);
+  }, [show]);
+
   const login = async () => {
     const res = await fetch(`${IP}/api/login`, fixHeader({
       method: "POST",
@@ -60,7 +64,6 @@ const LoginPrompt = ({setter}) => {
         </div>
         <div className="login-submit" onClick={async (e) => {
           const res = await login();
-          setter(true);
           setShow(false);
         }}>
           Login
@@ -129,6 +132,7 @@ const App = () => {
       setRunninghistory(items);
     }));
     fetch(`${IP}/api/savedpath`, fixHeader({})).then((r) => r.json().then((res) => {
+      console.log(res);
       const savePaths = [];
       for (const path of res) {
         const pts = JSON.parse(path.pathpoints);

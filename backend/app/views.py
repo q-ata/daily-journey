@@ -11,7 +11,7 @@ import json
 from decimal import Decimal
 
 
-f = open("/root/hack-the-north/htn/app/key.json")
+f = open("./app/key.json")
 
 jdata = json.load(f)
 
