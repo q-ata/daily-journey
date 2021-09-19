@@ -20,11 +20,13 @@ from app import views
 
 router = routers.DefaultRouter()
 router.register(r'runhistory', views.RunHistoryView, 'runhistory_api')
-router.register(r'pathpoints', views.PathPointsView, 'pathpoints_api')
+router.register(r'savedpath', views.SavedPathView, 'savedpath_api')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login', views.LoginView.as_view(), name="login_api"),
-    path('api/register', views.RegisterView.as_view(), name="register_api")
+    path('api/register', views.RegisterView.as_view(), name="register_api"),
+    path('api/map', views.MapView.as_view(), name="map_api"),
+    path('api/gquery', views.GoogleMapView.as_view(), name="gquery_api")
 ]

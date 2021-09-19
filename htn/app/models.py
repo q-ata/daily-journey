@@ -11,7 +11,7 @@ class RunHistory(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.DateTimeField()
     distance = models.IntegerField()
-    pathid = models.BigAutoField(primary_key=True)
+    pathid = models.AutoField(primary_key=True)
 
 class SearchSettings(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -26,7 +26,6 @@ class StartingLocs(models.Model):
 
 class SavedPaths(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    pathid = models.IntegerField()
     pathpoints = models.TextField()
 
 #model here
